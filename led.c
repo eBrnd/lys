@@ -6,9 +6,9 @@
 #define PWM_DDR DDRC
 
 // PWM Pins.
-#define PR PC1
-#define PG PC2
-#define PB PC3
+#define PR PC3
+#define PG PC1
+#define PB PC2
 
 void setup_port() {
   PWM_DDR = (1 << PR) | (1 << PG) | (1 << PB);
@@ -19,7 +19,7 @@ void setup_timer() {
   TCCR1B |= (1 << CS10) | (1 << WGM13); // Compare with OCR1A.
   TIMSK1 |= (1 << TOIE1); // Enable timer overflow interrupt.
 
-  OCR1A = 64;
+  OCR1A = 128;
 }
 
 // Globals storing PWM values.
@@ -51,11 +51,25 @@ int main() {
   setup_timer();
   sei();
 
+  uint32_t color_counter;
   r = g = b = 0;
 
   for(;;) {
-    r++; g++; b++;
-    _delay_ms(100);
+    color_counter++;
+
+    if(color_counter < 256) {
+      g = b = 0;
+      r = color_counter;
+    } else if(color_counter < 512) {
+      r = b = 0;
+      g = color_counter - 256;
+    } else {
+      r = g = 0;
+      b = color_counter - 512;
+      if(color_counter == 767) 
+        color_counter = 0;
+    }
+    _delay_ms(5);
   }
 }
 
