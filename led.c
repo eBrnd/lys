@@ -16,8 +16,10 @@ void setup_port() {
 
 void setup_timer() {
   TCCR1A |= (1 << WGM10); // 8 bit.
-  TCCR1B |= (1 << CS10); // No timer prescaling.
+  TCCR1B |= (1 << CS10) | (1 << WGM13); // Compare with OCR1A.
   TIMSK1 |= (1 << TOIE1); // Enable timer overflow interrupt.
+
+  OCR1A = 64;
 }
 
 // Globals storing PWM values.
