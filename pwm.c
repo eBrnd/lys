@@ -1,5 +1,6 @@
-#include <util/delay.h>
 #include <avr/interrupt.h>
+
+#include "pwm.h"
 
 // PWM Port.
 #define PWM_PORT PORTC
@@ -10,6 +11,14 @@
 #define PG PC1
 #define PB PC2
 
+// Globals storing PWM values.
+unsigned char r, g, b;
+
+// Forward declarations.
+void setup_port();
+void setup_timer();
+
+// Logarithm table for smoother visual appearance.
 uint8_t pwmtable[] = {
   0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
@@ -23,21 +32,30 @@ uint8_t pwmtable[] = {
   180, 184, 188, 192, 196, 201, 205, 210, 214, 219, 224, 229, 234, 239, 244, 249, 255
 };
 
-void setup_port() {
-  PWM_DDR = (1 << PR) | (1 << PG) | (1 << PB);
+// Setup - call this at boot time.
+void pwm_setup() {
+  r = g = b = 0;
+  setup_port();
+  setup_timer();
 }
 
-void setup_timer() {
-  TCCR1A |= (1 << WGM10); // 8 bit.
-  TCCR1B |= (1 << CS10) | (1 << WGM13); // Compare with OCR1A.
-  TIMSK1 |= (1 << TOIE1); // Enable timer overflow interrupt.
+// Set PWM - set new value for the PWM.
+void pwm_set() {
+  static unsigned color_counter = 0;
+  color_counter++;
 
-  OCR1A = 128;
+  if (color_counter < 256) {
+    g = b = 0;
+    r = pwmtable[color_counter];
+  } else if (color_counter < 512) {
+    g = b = 0;
+    r = pwmtable[255 - (color_counter - 256)];
+  } else {
+    color_counter = 0;
+  }
 }
 
-// Globals storing PWM values.
-unsigned char r, g, b;
-
+// This is run from the timer ISR.
 void do_pwm() {
   static unsigned char count = 0;
   count++;
@@ -58,34 +76,22 @@ void do_pwm() {
     PWM_PORT &= ~(1 << PB);
 }
 
-int main() {
+// ==== Setup helper functions. ====
+void setup_port() {
+  PWM_DDR = (1 << PR) | (1 << PG) | (1 << PB);
+}
+
+void setup_timer() {
   cli();
-  setup_port();
-  setup_timer();
+  TCCR1A |= (1 << WGM10); // 8 bit.
+  TCCR1B |= (1 << CS10) | (1 << WGM13); // Compare with OCR1A.
+  TIMSK1 |= (1 << TOIE1); // Enable timer overflow interrupt.
+
+  OCR1A = 256;
   sei();
-
-  uint32_t color_counter = 0;
-  r = g = b = 0;
-
-  for(;;) {
-    color_counter++;
-
-    if(color_counter < 256) {
-      g = b = 0;
-      r = pwmtable[color_counter];
-    } else if(color_counter < 512) {
-      r = b = 0;
-      g = pwmtable[color_counter - 256];
-    } else {
-      r = g = 0;
-      b = pwmtable[color_counter - 512];
-      if(color_counter == 767) 
-        color_counter = 0;
-    }
-    _delay_ms(5);
-  }
 }
 
 ISR(TIMER1_OVF_vect) {
   do_pwm();
 }
+// ==== ====

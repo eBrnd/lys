@@ -10,11 +10,13 @@ FUSES = -U lfuse:w:0xce:m -U hfuse:w:0xdf:m -U efuse:w:0xf9:m
 
 
 TARGET = led
-OBJS = led.o
 
+SOURCES = $(wildcard *.c)
+OBJS = $(patsubst %.c, %.o, ${SOURCES})
+
+.PHONY: all program fuses clean
 
 all: $(TARGET).hex
-
 
 program: $(TARGET).hex
 	avrdude -p $(AVRDUDE_MCU) -c usbasp -U flash:w:$(TARGET).hex
@@ -24,7 +26,7 @@ fuses:
 
 
 $(TARGET).elf: $(OBJS)
-	$(CC) -mmcu=$(MCU) -o $@ $<
+	$(CC) -mmcu=$(MCU) -o $@ $(OBJS)
 
 $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
@@ -33,4 +35,4 @@ $(TARGET).hex: $(TARGET).elf
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm $(TARGET).hex $(TARGET).elf $(OBJS)
+	-rm $(TARGET).hex $(TARGET).elf $(OBJS)
