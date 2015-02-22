@@ -8,8 +8,7 @@ LDFLAGS +=
 OBJCOPY = avr-objcopy
 FUSES = -U lfuse:w:0xce:m -U hfuse:w:0xdf:m -U efuse:w:0xf9:m
 
-
-TARGET = led
+TARGET = lys
 
 SOURCES = $(wildcard *.c)
 OBJS = $(patsubst %.c, %.o, ${SOURCES})
