@@ -1,4 +1,5 @@
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
 #include "pwm.h"
 
@@ -19,7 +20,7 @@ void setup_port();
 void setup_timer();
 
 // Logarithm table for smoother visual appearance.
-uint8_t pwmtable[] = {
+const uint8_t pwmtable[] PROGMEM = {
   0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
   2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
   4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8,
@@ -45,17 +46,17 @@ void pwm_set() {
   color_counter++;
 
   if (color_counter < 256) {
-    r = pwmtable[color_counter];
+    r = pgm_read_byte(&pwmtable[color_counter]);
   } else if (color_counter < 512) {
-    g = pwmtable[color_counter - 256];
+    g = pgm_read_byte(&pwmtable[color_counter - 256]);
   } else if (color_counter < 768) {
-    b = pwmtable[color_counter - 512];
+    b = pgm_read_byte(&pwmtable[color_counter - 512]);
   } else if (color_counter < 1024) {
-    r = pwmtable[255 - (color_counter - 768)];
+    r = pgm_read_byte(&pwmtable[255 - (color_counter - 768)]);
   } else if (color_counter < 1280) {
-    g = pwmtable[255 - (color_counter - 1024)];
+    g = pgm_read_byte(&pwmtable[255 - (color_counter - 1024)]);
   } else if (color_counter < 1536) {
-    b = pwmtable[255 - (color_counter - 1280)];
+    b = pgm_read_byte(&pwmtable[255 - (color_counter - 1280)]);
   } else {
     color_counter = 0;
   }
