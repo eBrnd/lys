@@ -60,28 +60,26 @@ void pwm_set() {
   } else {
     color_counter = 0;
   }
-
 }
 
 // This is run from the timer ISR.
-void do_pwm() {
-  static unsigned char count = 0;
-  count++;
+static inline void do_pwm() {
+  static unsigned char bit_index = 0;
 
-  if(count < r)
-    PWM_PORT |= (1 << PR);
-  else
-    PWM_PORT &= ~(1 << PR);
+  bit_index++;
+  if (bit_index == 8)
+    bit_index = 0;
+  TCNT1 = 65535 - (64 << bit_index);
 
-  if(count < g)
-    PWM_PORT |= (1 << PG);
-  else
-    PWM_PORT &= ~(1 << PG);
+  unsigned char pwm_out = 0;
+  if (r & (1 << bit_index))
+    pwm_out |= (1 << PR);
+  if (g & (1 << bit_index))
+    pwm_out |= (1 << PG);
+  if (b & (1 << bit_index))
+    pwm_out |= (1 << PB);
 
-  if(count < b)
-    PWM_PORT |= (1 << PB);
-  else
-    PWM_PORT &= ~(1 << PB);
+  PWM_PORT = pwm_out;
 }
 
 // ==== Setup helper functions. ====
@@ -91,8 +89,8 @@ void setup_port() {
 
 void setup_timer() {
   cli();
-  TCCR1A |= (1 << WGM10); // 8 bit.
-  TCCR1B |= (1 << CS10) | (1 << WGM13); // Compare with OCR1A.
+  TCCR1A |= 0;
+  TCCR1B |= (1 << CS10);
   TIMSK1 |= (1 << TOIE1); // Enable timer overflow interrupt.
 
   OCR1A = 256;
