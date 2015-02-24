@@ -64,27 +64,32 @@ void pwm_set() {
 
 // This is run from the timer ISR.
 static inline void do_pwm() {
-  static unsigned char bit_index = 0;
+  PWM_PORT |= (1 << PC5);
 
-  bit_index++;
-  if (bit_index == 8)
-    bit_index = 0;
-  TCNT1 = 65535 - (64 << bit_index);
+  static unsigned char bit_index = 1;
+
+  bit_index = (bit_index >> 7) | (bit_index << 1); // Rotate bit 1 to the left.
+
+  TCNT1 = ~(bit_index << 6); // = 65535 (=timer top) - (bit_index << 5).
 
   unsigned char pwm_out = 0;
-  if (r & (1 << bit_index))
+  if (r & (bit_index))
     pwm_out |= (1 << PR);
-  if (g & (1 << bit_index))
+  if (g & (bit_index))
     pwm_out |= (1 << PG);
-  if (b & (1 << bit_index))
+  if (b & (bit_index))
     pwm_out |= (1 << PB);
 
   PWM_PORT = pwm_out;
+  PWM_PORT &= ~(1 << PC5);
 }
 
 // ==== Setup helper functions. ====
 void setup_port() {
   PWM_DDR = (1 << PR) | (1 << PG) | (1 << PB);
+
+  // Testing: How long does interrupt routine take?
+  PWM_DDR |= (1 << PC5);
 }
 
 void setup_timer() {
