@@ -3,6 +3,8 @@
 
 #include "pwm.h"
 
+#include "color.h"
+
 // PWM Port.
 #define PWM_PORT PORTC
 #define PWM_DDR DDRC
@@ -43,29 +45,21 @@ void pwm_setup() {
 // Set PWM - set new value for the PWM.
 void pwm_set() {
   static unsigned color_counter = 0;
-  color_counter++;
-
-  if (color_counter < 256) {
-    r = pgm_read_byte(&pwmtable[color_counter]);
-  } else if (color_counter < 512) {
-    g = pgm_read_byte(&pwmtable[color_counter - 256]);
-  } else if (color_counter < 768) {
-    b = pgm_read_byte(&pwmtable[color_counter - 512]);
-  } else if (color_counter < 1024) {
-    r = pgm_read_byte(&pwmtable[255 - (color_counter - 768)]);
-  } else if (color_counter < 1280) {
-    g = pgm_read_byte(&pwmtable[255 - (color_counter - 1024)]);
-  } else if (color_counter < 1536) {
-    b = pgm_read_byte(&pwmtable[255 - (color_counter - 1280)]);
-  } else {
+  if (++color_counter == 1536)
     color_counter = 0;
-  }
+
+  struct color_hsv ch = { color_counter, 64, 196 };
+  struct color_rgb cr;
+
+  color_hsv2rgb(&ch, &cr);
+
+  r = pgm_read_byte(&pwmtable[cr.r]);
+  g = pgm_read_byte(&pwmtable[cr.g]);
+  b = pgm_read_byte(&pwmtable[cr.b]);
 }
 
 // This is run from the timer ISR.
 static inline void do_pwm() {
-  PWM_PORT |= (1 << PC5);
-
   static unsigned char bit_index = 1;
 
   bit_index = (bit_index >> 7) | (bit_index << 1); // Rotate bit 1 to the left.
@@ -81,7 +75,6 @@ static inline void do_pwm() {
     pwm_out |= (1 << PB);
 
   PWM_PORT = pwm_out;
-  PWM_PORT &= ~(1 << PC5);
 }
 
 // ==== Setup helper functions. ====
