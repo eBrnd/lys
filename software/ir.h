@@ -15,6 +15,6 @@ struct ir_command_t {
 };
 
 void ir_setup();
-void ir_get_last_command();
+struct ir_command_t ir_get_last_command();
 
 #endif

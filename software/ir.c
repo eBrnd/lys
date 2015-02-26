@@ -36,8 +36,8 @@ void ir_setup() {
 }
 
 // Read last recognized command.
-ir_command_t ir_get_last_command() {
-	ir_command_t result;
+struct ir_command_t ir_get_last_command() {
+	struct ir_command_t result;
 
 	PCICR  &= ~(1 << INTERRUPT_PORT);
 
@@ -111,11 +111,11 @@ ISR(PCINT2_vect) {
 					((char*)&data)[1],
 					((char*)&data)[2],
 					((char*)&data)[3]
-				}
+				};
 
-				if(!(data[0]&data[1])&&!(data[2]&data[3])) {
-					last_data[0] = data[0];
-					last_data[1] = data[2];
+				if(!(data_bytes[0]&data_bytes[1])&&!(data_bytes[2]&data_bytes[3])) {
+					last_data[0] = data_bytes[0];
+					last_data[1] = data_bytes[2];
 					flag_repeat = false;
 					flag_valid = true;
 				}
