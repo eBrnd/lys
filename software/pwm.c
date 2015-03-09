@@ -44,15 +44,14 @@ void pwm_setup() {
 }
 
 // Set PWM - set new value for the PWM.
-void pwm_set() {
+void pwm_set(struct color_hsv* ch) {
   static unsigned color_counter = 0;
   if (++color_counter == 1536)
     color_counter = 0;
 
-  struct color_hsv ch = { color_counter, 196, 196 };
   struct color_rgb cr;
 
-  color_hsv2rgb(&ch, &cr);
+  color_hsv2rgb(ch, &cr);
 
   r = pgm_read_word(&pwmtable[cr.r]);
   g = pgm_read_word(&pwmtable[cr.g]);
