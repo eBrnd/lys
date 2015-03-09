@@ -3,6 +3,11 @@
 
 #include "ir.h"
 
+#include "uart.h"
+
+// Timer interrupt shall run with 10kHz, prescaler is 8.
+#define TIMER_TICKS F_CPU/80000
+
 // States for IR protocol state machine.
 enum ir_state_t {
 	IDLE,
@@ -31,32 +36,30 @@ void ir_setup() {
 	//Timer
 	TCCR0A |= (1 << WGM01);
 	TCCR0B |= (1 << CS01);
-	OCR0A  |= 250;
+	OCR0A  |= TIMER_TICKS;
 	sei();
 }
 
 // Read last recognized command.
-struct ir_command_t ir_get_last_command() {
-	struct ir_command_t result;
-
+void ir_get_last_command(struct ir_command_t* command) {
 	PCICR  &= ~(1 << INTERRUPT_PORT);
 
-	result.valid = flag_valid;
-	result.repeat = flag_repeat;
-	result.address = last_data[0];
-	result.command = last_data[1];
+	command->valid = flag_valid;
+	command->repeat = flag_repeat;
+	command->address = last_data[0];
+	command->command = last_data[1];
+
+	flag_valid = false;
 
 	PCICR  |= (1 << INTERRUPT_PORT);
-
-	return result;
 }
 
 // ISRs for pin and timer interrupt.
 ISR(PCINT2_vect) {
-	static uint8_t bit = 0;
-	static uint32_t data = 0;
+	PCICR  &= ~(1 << INTERRUPT_PORT);
 
-	TCNT0 = 0;
+	static volatile uint8_t bit = 0;
+	static volatile uint32_t data = 0;
 
 	switch(state) {
 		case IDLE:
@@ -64,6 +67,9 @@ ISR(PCINT2_vect) {
 			state = PREAMBLE_H;
 			break;
 		case PREAMBLE_H:
+			bit = 0;
+			data = 0;
+			// Preamble high lasts 9ms.
 			if(ir_time>85 && ir_time<95) {
 				state = PREAMBLE_L;
 			} else {
@@ -71,10 +77,13 @@ ISR(PCINT2_vect) {
 			}
 			break;
 		case PREAMBLE_L:
-			if(ir_time>40 && ir_time<50) {
+			// Preamble is followed by an 4.5ms gap,
+			if(ir_time>40 && ir_time<47) {
 				state = DATA_H;
-			} else if(ir_time>15 && ir_time<25) {
-				//Repeat
+
+			// or 2.25ms for a repeat signal.
+			// TODO: Check if a valid pulse follows.
+			} else if(ir_time>20 && ir_time<25) {
 				flag_repeat = true;
 				flag_valid = true;
 				state = PREAMBLE_H;
@@ -83,28 +92,28 @@ ISR(PCINT2_vect) {
 			}
 			break;
 		case DATA_H:
-			if(ir_time>2 && ir_time<7) {
+			// Every data pulse lasts 560µS.
+			if(ir_time>1 && ir_time<7) {
 				state = DATA_L;
 			} else {
-				bit = 0;
-				data = 0;
 				state = PREAMBLE_H;
 			}
 			break;
 		case DATA_L:
-			if(ir_time>2 && ir_time<7) {
+			// A logical 0 has a 560µS gap in between,
+			if(ir_time>1 && ir_time<7) {
 				bit++;
-				state = DATA_H; // 0
+				state = DATA_H;
+			// for a logical 1 the gap lasts about 1.75ms.
 			} else if(ir_time>14 && ir_time <19) {
 				data |= ((uint32_t)1 << bit);
 				bit++;
-				state = DATA_H; // 1
+				state = DATA_H;
 			} else {
-				bit = 0;
-				data = 0;
 				state = PREAMBLE_H;
 			}
 
+			// A complete command is 32 bits long.
 			if(bit > 31) {
 				char data_bytes[4] = {
 					((char*)&data)[0],
@@ -113,6 +122,7 @@ ISR(PCINT2_vect) {
 					((char*)&data)[3]
 				};
 
+				// For a valid command every second byte is the inverse of the previous byte.
 				if(!(data_bytes[0]&data_bytes[1])&&!(data_bytes[2]&data_bytes[3])) {
 					last_data[0] = data_bytes[0];
 					last_data[1] = data_bytes[2];
@@ -120,19 +130,22 @@ ISR(PCINT2_vect) {
 					flag_valid = true;
 				}
 
-				bit = 0;
 				state = PREAMBLE_H;
 			}
 			break;
 	}
+
+	TCNT0 = 0;
 	ir_time = 0;
+
+	PCICR  |= (1 << INTERRUPT_PORT);
 }
 
 ISR(TIMER0_COMPA_vect) {
 	ir_time++;
 
 	//Go to sleep on overflow.
-	if(!ir_time) {
+	if(ir_time==0) {
 		TIMSK0 &= ~(1 << OCIE0A);
 		state = IDLE;
 	}
