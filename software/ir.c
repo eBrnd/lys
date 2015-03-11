@@ -70,7 +70,7 @@ ISR(PCINT2_vect) {
 			bit = 0;
 			data = 0;
 			// Preamble high lasts 9ms.
-			if(ir_time>85 && ir_time<95) {
+			if(ir_time>80 && ir_time<100) {
 				state = PREAMBLE_L;
 			} else {
 				state = PREAMBLE_H;
@@ -78,7 +78,7 @@ ISR(PCINT2_vect) {
 			break;
 		case PREAMBLE_L:
 			// Preamble is followed by an 4.5ms gap,
-			if(ir_time>40 && ir_time<47) {
+			if(ir_time>35 && ir_time<45) {
 				state = DATA_H;
 
 			// or 2.25ms for a repeat signal.
@@ -93,7 +93,7 @@ ISR(PCINT2_vect) {
 			break;
 		case DATA_H:
 			// Every data pulse lasts 560µS.
-			if(ir_time>1 && ir_time<7) {
+			if(ir_time>0 && ir_time<10) {
 				state = DATA_L;
 			} else {
 				state = PREAMBLE_H;
@@ -101,11 +101,11 @@ ISR(PCINT2_vect) {
 			break;
 		case DATA_L:
 			// A logical 0 has a 560µS gap in between,
-			if(ir_time>1 && ir_time<7) {
+			if(ir_time>0 && ir_time<10) {
 				bit++;
 				state = DATA_H;
 			// for a logical 1 the gap lasts about 1.75ms.
-			} else if(ir_time>14 && ir_time <19) {
+			} else if(ir_time>12 && ir_time <25) {
 				data |= ((uint32_t)1 << bit);
 				bit++;
 				state = DATA_H;
