@@ -1,5 +1,5 @@
-#ifndef COLOR_H_A9WEV71MW0
-#define COLOR_H_A9WEV71MW0
+#ifndef TIMER_H_A9WEV71MW0
+#define TIMER_H_A9WEV71MW0
 
 #include <stdint.h>
 

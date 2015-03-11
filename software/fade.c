@@ -15,7 +15,7 @@ void fade_set_target(struct color_hsv* new_target) {
 void fade_step() {
   static struct color_hsv color_now;
 
-  pwm_get(&color_now);
+  pwm_get_hsv(&color_now);
 
   if (color_now.h > fade_target.h)
     color_now.h--;
@@ -32,5 +32,5 @@ void fade_step() {
   else if (color_now.v < fade_target.v)
     color_now.v++;
 
-  pwm_set(&color_now);
+  pwm_set_hsv(&color_now);
 }

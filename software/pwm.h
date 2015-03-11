@@ -4,7 +4,9 @@
 #include "color.h"
 
 void pwm_setup();
-void pwm_set(struct color_hsv* ch);
-void pwm_get(struct color_hsv* ch);
+void pwm_set_hsv(struct color_hsv* ch);
+void pwm_set_rgb(struct color_rgb* cr);
+void pwm_get_hsv(struct color_hsv* ch);
+void pwm_get_rgb(struct color_rgb* cr);
 
 #endif

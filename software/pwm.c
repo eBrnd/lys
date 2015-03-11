@@ -48,22 +48,33 @@ void pwm_setup() {
 }
 
 // Set PWM - set new value for the PWM.
-void pwm_set(struct color_hsv* ch) {
+void pwm_set_hsv(struct color_hsv* ch) {
   struct color_rgb cr;
 
   memcpy(&current_color, ch, sizeof(struct color_hsv));
 
   color_hsv2rgb(ch, &cr);
 
-  r = pgm_read_word(&pwmtable[cr.r]);
-  g = pgm_read_word(&pwmtable[cr.g]);
-  b = pgm_read_word(&pwmtable[cr.b]);
+  pwm_set_rgb(&cr);
+}
+
+void pwm_set_rgb(struct color_rgb* cr) {
+  r = pgm_read_word(&pwmtable[cr->r]);
+  g = pgm_read_word(&pwmtable[cr->g]);
+  b = pgm_read_word(&pwmtable[cr->b]);
 }
 
 //Get current color
-void pwm_get(struct color_hsv* ch) {
+void pwm_get_hsv(struct color_hsv* ch) {
   memcpy(ch, &current_color, sizeof(struct color_hsv));
 }
+
+void pwm_get_rgb(struct color_rgb* cr) {
+  cr->r = r;
+  cr->g = g;
+  cr->b = b;
+}
+
 
 // This is run from the timer ISR.
 static inline void do_pwm() {
