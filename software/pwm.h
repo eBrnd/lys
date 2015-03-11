@@ -5,5 +5,6 @@
 
 void pwm_setup();
 void pwm_set(struct color_hsv* ch);
+void pwm_get(struct color_hsv* ch);
 
 #endif

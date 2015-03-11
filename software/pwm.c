@@ -1,5 +1,6 @@
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <string.h>
 
 #include "pwm.h"
 
@@ -16,6 +17,9 @@
 
 // Globals storing PWM values.
 uint16_t r, g, b;
+
+// Global to cache last set color
+struct color_hsv current_color = {0, 0, 0};
 
 // Forward declarations.
 void setup_port();
@@ -47,11 +51,18 @@ void pwm_setup() {
 void pwm_set(struct color_hsv* ch) {
   struct color_rgb cr;
 
+  memcpy(&current_color, ch, sizeof(struct color_hsv));
+
   color_hsv2rgb(ch, &cr);
 
   r = pgm_read_word(&pwmtable[cr.r]);
   g = pgm_read_word(&pwmtable[cr.g]);
   b = pgm_read_word(&pwmtable[cr.b]);
+}
+
+//Get current color
+void pwm_get(struct color_hsv* ch) {
+  memcpy(ch, &current_color, sizeof(struct color_hsv));
 }
 
 // This is run from the timer ISR.

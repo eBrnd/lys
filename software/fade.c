@@ -13,7 +13,9 @@ void fade_set_target(struct color_hsv* new_target) {
 
 // This should be called in more or less regular intervals and it does the actual fading.
 void fade_step() {
-  static struct color_hsv color_now = { 0, 0, 0 };
+  static struct color_hsv color_now;
+
+  pwm_get(&color_now);
 
   if (color_now.h > fade_target.h)
     color_now.h--;
