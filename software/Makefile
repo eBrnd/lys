@@ -7,6 +7,7 @@ CFLAGS += -Wall -g -Os -mmcu=$(MCU) -std=gnu99 -pedantic-errors -D F_CPU=$(F_CPU
 LDFLAGS +=
 OBJCOPY = avr-objcopy
 FUSES = -U lfuse:w:0xce:m -U hfuse:w:0xdf:m -U efuse:w:0xf9:m
+PROGRAMMER = usbasp
 
 TARGET = lys
 
@@ -18,10 +19,10 @@ OBJS = $(patsubst %.c, %.o, ${SOURCES})
 all: $(TARGET).hex
 
 program: $(TARGET).hex
-	avrdude -p $(AVRDUDE_MCU) -c usbasp -U flash:w:$(TARGET).hex
+	avrdude -p $(AVRDUDE_MCU) -c $(PROGRAMMER) -U flash:w:$(TARGET).hex
 
 fuses:
-	avrdude -p $(AVRDUDE_MCU) -c usbasp -P /dev/ttyUSB0 $(FUSES)
+	avrdude -p $(AVRDUDE_MCU) -c $(PROGRAMMER) $(FUSES)
 
 
 $(TARGET).elf: $(OBJS)
@@ -34,4 +35,4 @@ $(TARGET).hex: $(TARGET).elf
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	-rm $(TARGET).hex $(TARGET).elf $(OBJS)
+	-rm -f $(TARGET).hex $(TARGET).elf $(OBJS)
