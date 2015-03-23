@@ -12,7 +12,7 @@ void setup() {
   pwm_setup();
   ir_setup();
   timer_setup();
-  //fade_setup(1);
+  fade_setup();
   program_setup();
 }
 

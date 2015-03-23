@@ -2,6 +2,7 @@
 #define TIMER_H_A9WEV71MW0
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef void (*timer_callback_t)(void);
 

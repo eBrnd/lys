@@ -5,5 +5,6 @@
 
 void fade_set_target(struct color_hsv* new_target);
 void fade_step();
+void fade_setup();
 
 #endif

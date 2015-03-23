@@ -31,102 +31,102 @@ void remote_handle_commands() {
 			#endif
 			#ifdef KEY_RED_0
 			case KEY_RED_0:
-				program_static(0, 255);
+				program_fade_static(0, 255);
 				break;
 			#endif
 			#ifdef KEY_RED_1
 			case KEY_RED_1:
-				program_static(64, 255);
+				program_fade_static(64, 255);
 				break;
 			#endif
 			#ifdef KEY_RED_2
 			case KEY_RED_2:
-				program_static(128, 255);
+				program_fade_static(128, 255);
 				break;
 			#endif
 			#ifdef KEY_RED_3
 			case KEY_RED_3:
-				program_static(192, 255);
+				program_fade_static(192, 255);
 				break;
 			#endif
 			#ifdef KEY_RED_4
 			case KEY_RED_4:
-				program_static(256, 255);
+				program_fade_static(256, 255);
 				break;
 			#endif
 			#ifdef KEY_GREEN_0
 			case KEY_GREEN_0:
-				program_static(512, 255);
+				program_fade_static(512, 255);
 				break;
 			#endif
 			#ifdef KEY_GREEN_1
 			case KEY_GREEN_1:
-				program_static(576, 255);
+				program_fade_static(576, 255);
 				break;
 			#endif
 			#ifdef KEY_GREEN_2
 			case KEY_GREEN_2:
-				program_static(640, 255);
+				program_fade_static(640, 255);
 				break;
 			#endif
 			#ifdef KEY_GREEN_3
 			case KEY_GREEN_3:
-				program_static(704, 255);
+				program_fade_static(704, 255);
 				break;
 			#endif
 			#ifdef KEY_GREEN_4
 			case KEY_GREEN_4:
-				program_static(768, 255);
+				program_fade_static(768, 255);
 				break;
 			#endif
 			#ifdef KEY_BLUE_0
 			case KEY_BLUE_0:
-				program_static(1024, 255);
+				program_fade_static(1024, 255);
 				break;
 			#endif
 			#ifdef KEY_BLUE_1
 			case KEY_BLUE_1:
-				program_static(1088, 255);
+				program_fade_static(1088, 255);
 				break;
 			#endif
 			#ifdef KEY_BLUE_2
 			case KEY_BLUE_2:
-				program_static(1152, 255);
+				program_fade_static(1152, 255);
 				break;
 			#endif
 			#ifdef KEY_BLUE_3
 			case KEY_BLUE_3:
-				program_static(1216, 255);
+				program_fade_static(1216, 255);
 				break;
 			#endif
 			#ifdef KEY_BLUE_4
 			case KEY_BLUE_4:
-				program_static(1280, 255);
+				program_fade_static(1280, 255);
 				break;
 			#endif
 			#ifdef KEY_WHITE_0
 			case KEY_WHITE_0:
-				program_static(0, 0);
+				program_fade_static(0, 0);
 				break;
 			#endif
 			#ifdef KEY_WHITE_1
 			case KEY_WHITE_1:
-				program_static(132, 115);
+				program_fade_static(132, 115);
 				break;
 			#endif
 			#ifdef KEY_WHITE_2
 			case KEY_WHITE_2:
-				program_static(128, 66);
+				program_fade_static(128, 66);
 				break;
 			#endif
 			#ifdef KEY_WHITE_3
 			case KEY_WHITE_3:
-				program_static(930, 23);
+				program_fade_static(930, 23);
 				break;
 			#endif
 			#ifdef KEY_WHITE_4
 			case KEY_WHITE_4:
-				program_static(991, 38);
+				program_fade_static(991, 38);
 				break;
 			#endif
 			#ifdef KEY_RED_UP

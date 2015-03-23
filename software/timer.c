@@ -1,5 +1,4 @@
 #include <avr/interrupt.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
