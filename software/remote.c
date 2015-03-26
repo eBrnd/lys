@@ -201,6 +201,7 @@ void remote_handle_commands() {
 
 			#ifdef KEY_PROGRAM_1
 			case KEY_PROGRAM_1:
+				program_fire();
 				break;
 			#endif
 
