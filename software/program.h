@@ -13,5 +13,6 @@ void program_brightness_increase(uint8_t steps);
 void program_brightness_decrease(uint8_t steps);
 
 void program_fire();
+void program_water();
 
 #endif

@@ -10,20 +10,23 @@
 struct color_hsv color_buffer = { 0, 0, 255 };
 const unsigned default_fade_duration = 1000;
 
-bool fire_running = false;
+enum Program {
+	Program_STATIC, Program_FIRE, Program_WATER
+};
+
+enum Program current_program = Program_STATIC;
 
 void program_setup() {
 	pwm_set_hsv(&color_buffer);
 }
 
 void program_on() {
-	fire_running = false;
+	current_program = Program_STATIC;
 	fade_set_target(&color_buffer, default_fade_duration);
-	fire_running = false;
 }
 
 void program_off() {
-	fire_running = false;
+	current_program = Program_STATIC;
 	pwm_get_hsv(&color_buffer);
 	uint8_t vtemp = color_buffer.v;
 	color_buffer.v = 0;
@@ -41,7 +44,7 @@ void program_static(uint16_t hue, uint8_t saturation) {
 }
 
 void program_fade_static(uint16_t hue, uint8_t saturation) {
-	fire_running = false;
+	current_program = Program_STATIC;
 	color_buffer.h = hue;
 	color_buffer.s = saturation;
 
@@ -49,7 +52,7 @@ void program_fade_static(uint16_t hue, uint8_t saturation) {
 }
 
 void program_brightness_increase(uint8_t steps) {
-	fire_running = false;
+	current_program = Program_STATIC;
 	pwm_get_hsv(&color_buffer);
 	if(steps > 255 - color_buffer.v) {
 		color_buffer.v = 255;
@@ -61,7 +64,7 @@ void program_brightness_increase(uint8_t steps) {
 }
 
 void program_brightness_decrease(uint8_t steps) {
-	fire_running = false;
+	current_program = Program_STATIC;
 	pwm_get_hsv(&color_buffer);
 	if(steps > 240 || steps + 15 > color_buffer.v) {
 		color_buffer.v = 15;
@@ -72,9 +75,8 @@ void program_brightness_decrease(uint8_t steps) {
 	fade_set_target(&color_buffer, 10);
 }
 
-
 void fire_step() {
-	if (fire_running) {
+	if (current_program == Program_FIRE) {
 		struct color_hsv color = {
 			random() % 256, 255, random() % 256
 		};
@@ -94,6 +96,25 @@ void fire_step() {
 }
 
 void program_fire() {
-	fire_running = true;
+	current_program = Program_FIRE;
 	timer_register_single(fire_step, 100);
+}
+
+void water_step() {
+	if (current_program == Program_WATER) {
+		struct color_hsv color = {
+			640 + (random() % 512), 32 + random() % 224, 128 + random() % 128
+		};
+
+		unsigned duration = 128 + random() % 284;
+
+		fade_set_target(&color, duration);
+
+		timer_register_single(water_step, 10 * duration);
+	}
+}
+
+void program_water() {
+	current_program = Program_WATER;
+	timer_register_single(water_step, 240);
 }

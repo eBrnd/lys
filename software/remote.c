@@ -207,6 +207,7 @@ void remote_handle_commands() {
 
 			#ifdef KEY_PROGRAM_2
 			case KEY_PROGRAM_2:
+				program_water();
 				break;
 			#endif
 
