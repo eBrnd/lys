@@ -1,5 +1,4 @@
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #include <string.h>
 
 #include "pwm.h"
