@@ -45,9 +45,9 @@ void pwm_set_hsv(struct color_hsv* ch) {
 }
 
 void set_rgb(struct color_rgb* cr) {
-  r = cr->r * 4;
-  g = cr->g * 4;
-  b = cr->b * 4;
+  r = cr->r;
+  g = cr->g;
+  b = cr->b;
 }
 
 //Get current color
