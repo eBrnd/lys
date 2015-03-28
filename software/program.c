@@ -11,7 +11,7 @@ struct color_hsv color_buffer = { 0, 0, 255 };
 const unsigned default_fade_duration = 1000;
 
 enum Program {
-	Program_STATIC, Program_FIRE, Program_WATER
+	Program_STATIC, Program_FIRE, Program_WATER, Program_FOREST
 };
 
 enum Program current_program = Program_STATIC;
@@ -97,13 +97,13 @@ void fire_step() {
 
 void program_fire() {
 	current_program = Program_FIRE;
-	timer_register_single(fire_step, 100);
+	timer_register_single(fire_step, 1);
 }
 
 void water_step() {
 	if (current_program == Program_WATER) {
 		struct color_hsv color = {
-			640 + (random() % 512), 32 + random() % 224, 128 + random() % 128
+			640 + random() % 512, 32 + random() % 224, 128 + random() % 128
 		};
 
 		unsigned duration = 128 + random() % 284;
@@ -116,5 +116,25 @@ void water_step() {
 
 void program_water() {
 	current_program = Program_WATER;
-	timer_register_single(water_step, 240);
+	timer_register_single(water_step, 1);
 }
+
+void forest_step() {
+	if (current_program == Program_FOREST) {
+		struct color_hsv color = {
+			192 + random() % 512, 128 + random() % 128, 128 + random() % 128
+		};
+
+		unsigned duration = 128 + random() % 768;
+
+		fade_set_target(&color, duration);
+
+		timer_register_single(forest_step, 10 * duration);
+	}
+}
+
+void program_forest() {
+	current_program = Program_FOREST;
+	timer_register_single(forest_step, 1);
+}
+

@@ -14,5 +14,6 @@ void program_brightness_decrease(uint8_t steps);
 
 void program_fire();
 void program_water();
+void program_forest();
 
 #endif

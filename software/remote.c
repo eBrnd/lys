@@ -213,6 +213,7 @@ void remote_handle_commands() {
 
 			#ifdef KEY_PROGRAM_3
 			case KEY_PROGRAM_3:
+				program_forest();
 				break;
 			#endif
 
