@@ -122,7 +122,7 @@ void program_water() {
 void forest_step() {
 	if (current_program == Program_FOREST) {
 		struct color_hsv color = {
-			192 + random() % 512, 128 + random() % 128, 128 + random() % 128
+			192 + random() % 512, 192 + random() % 64, 128 + random() % 128
 		};
 
 		unsigned duration = 128 + random() % 768;
