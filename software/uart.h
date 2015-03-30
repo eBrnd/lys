@@ -18,7 +18,7 @@
 #define BAUD_ERROR ((BAUD_REAL*1000)/BAUD)
 
 #if ((BAUD_ERROR<950) || (BAUD_ERROR>1050))   // Make sure your UBRR_VAL will work
-  #error Baudrate error is bigger then 1% !
+	#error Baudrate error is bigger then 1% !
 #endif
 
 extern uint8_t uart_timed_out;
@@ -29,29 +29,29 @@ uint8_t uart_get_line(char buffer[], uint8_t maxlen);
 
 
 static inline void uart_putc(uint8_t data) {
-  UDR0 = data;           // write byte to data register
-  while (!(UCSR0A & (1<<  UDRE0)));   // waiting for the uart to finish transmission
-  UCSR0A |= (1 <<  UDRE0);
+	UDR0 = data;           // write byte to data register
+	while (!(UCSR0A & (1<<  UDRE0)));   // waiting for the uart to finish transmission
+	UCSR0A |= (1 <<  UDRE0);
 }
 
 static inline void uart_puts(char *data) {
-  uint8_t i;
-  for(i = 0; i < strlen(data); i++) {
-    uart_putc(data[i]);
-  }
+	uint8_t i;
+	for(i = 0; i < strlen(data); i++) {
+		uart_putc(data[i]);
+	}
 }
 
 static inline uint8_t uart_getc(void) {
-  while (!(UCSR0A & (1<<RXC0)));
-  return UDR0;
+	while (!(UCSR0A & (1<<RXC0)));
+	return UDR0;
 }
 
 static inline uint8_t uart_has_timed_out(void) {
-  return uart_timed_out;
+	return uart_timed_out;
 }
 
 static inline void uart_clear_time_out(void) {
-  uart_timed_out = 0;
+	uart_timed_out = 0;
 }
 
 

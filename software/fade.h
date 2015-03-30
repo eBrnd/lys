@@ -4,7 +4,6 @@
 #include "color.h"
 
 void fade_set_target(struct color_hsv* new_target, unsigned duration);
-void fade_step();
 void fade_setup();
 
 #endif

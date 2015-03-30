@@ -76,7 +76,7 @@ void program_brightness_decrease(uint8_t steps) {
 	fade_set_target(&color_buffer, 10);
 }
 
-void fire_step() {
+static void fire_step() {
 	if (current_program == Program_FIRE) {
 		struct color_hsv color = {
 			random() % 256, 255, random() % 256
@@ -101,7 +101,7 @@ void program_fire() {
 	timer_register_single(fire_step, 1);
 }
 
-void water_step() {
+static void water_step() {
 	if (current_program == Program_WATER) {
 		struct color_hsv color = {
 			640 + random() % 512, 32 + random() % 224, 128 + random() % 128
@@ -120,7 +120,7 @@ void program_water() {
 	timer_register_single(water_step, 1);
 }
 
-void forest_step() {
+static void forest_step() {
 	if (current_program == Program_FOREST) {
 		struct color_hsv color = {
 			192 + random() % 512, 128 + random() % 128, 128 + random() % 128

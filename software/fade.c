@@ -12,6 +12,9 @@ int32_t fade_diff_h, fade_diff_s, fade_diff_v;
 unsigned fade_steps = 0;
 unsigned fade_duration = 1;
 
+//Forward declarations
+static void fade_step();
+
 // Setup: Register timer.
 void fade_setup() {
 	pwm_setup();
@@ -38,7 +41,7 @@ void fade_set_target(struct color_hsv* new_target, unsigned duration) {
 }
 
 // This should be called in more or less regular intervals and it does the actual fading.
-void fade_step() {
+static void fade_step() {
 	if(fade_steps < fade_duration) {
 		fade_steps++;
 

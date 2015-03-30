@@ -5,23 +5,23 @@
 #include "user_input.h"
 #include "program.h"
 
-void setup() {
-  timer_setup();
-  user_input_setup();
-  program_setup();
+static void setup() {
+	timer_setup();
+	user_input_setup();
+	program_setup();
 }
 
-void periodic() {
-  user_input_periodic();
-  timer_run_tasks();
+static void periodic() {
+	user_input_periodic();
+	timer_run_tasks();
 }
 
 int main() {
-  setup();
+	setup();
 
-  for(;;) {
-    periodic();
-  }
+	for(;;) {
+		periodic();
+	}
 
-  return 0;
+	return 0;
 }
