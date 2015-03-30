@@ -8,8 +8,8 @@
 #define INTERRUPT_PIN PCINT23
 
 struct ir_command_t {
-	uint8_t address;
-	uint8_t command;
+	uint8_t	address;
+	uint8_t	command;
 	bool	repeat;
 	bool	valid;
 };

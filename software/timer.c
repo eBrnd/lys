@@ -14,8 +14,8 @@ static volatile uint16_t time_passed = 0;
 void timer_setup() {
 	TCCR2A |= (1 << WGM21);
 	TCCR2B |= (1 << CS20) | (1 << CS21) | (1 << CS22);
-	OCR2A  |= TICKS_PER_MS;
 	TIMSK2 |= (1 << OCIE2A);
+	OCR2A |= TICKS_PER_MS;
 }
 
 void timer_remove_task(struct timer_task_t* task) {

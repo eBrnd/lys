@@ -1,10 +1,14 @@
 #include "ir.h"
-#include "remote.h"
 #include "program.h"
+#include "user_input.h"
 
 struct ir_command_t cmd;
 
-void remote_handle_commands() {
+void user_input_setup() {
+	ir_setup();
+}
+
+void user_input_periodic() {
 	ir_get_last_command(&cmd);
 
 	if(cmd.valid && cmd.address == REMOTE_ADDRESS) {
