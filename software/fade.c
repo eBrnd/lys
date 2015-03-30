@@ -14,6 +14,7 @@ unsigned fade_duration = 1;
 
 // Setup: Register timer.
 void fade_setup() {
+	pwm_setup();
 	timer_register_periodic(fade_step, 10);
 }
 

@@ -8,7 +8,7 @@
 #include "timer.h"
 
 struct color_hsv color_buffer = { 0, 0, 255 };
-const unsigned default_fade_duration = 1000;
+const unsigned default_fade_duration = 20;
 
 enum Program {
 	Program_STATIC, Program_FIRE, Program_WATER, Program_FOREST
@@ -17,6 +17,7 @@ enum Program {
 enum Program current_program = Program_STATIC;
 
 void program_setup() {
+	fade_setup();
 	pwm_set_hsv(&color_buffer);
 }
 
